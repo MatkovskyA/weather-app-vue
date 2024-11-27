@@ -1,6 +1,5 @@
 <template>
-  <!-- вставить для проверки v-if="weatherInfo?.weather" -->
-  <div v-if="weatherInfo?.weather" class="section highlights">
+  <div class="section highlights">
     <div class="title">Today's Highlights</div>
     <div class="highlights-wrapper">
       <div class="highlight">
@@ -49,7 +48,7 @@
           <div class="card-info">
             <div class="card-centered">
               <div class="info-main">
-                <div class="info-main-num">{{ getPressureMm(weatherInfo?.main?.pressure)}}</div>
+                <div class="info-main-num">{{ getPressureMm(weatherInfo?.main?.pressure) }}</div>
                 <div class="info-main-text">mm</div>
               </div>
             </div>
@@ -83,7 +82,7 @@
               <div class="state">
                 <div class="state-pic state-pic--flipped"></div>
                 <div class="state-title">Sunset</div>
-                <div class="state-time">18:34:19</div>
+                <div class="state-time">{{ sunsetTime }}</div>
               </div>
             </div>
           </div>
@@ -107,7 +106,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed } from 'vue'
 import { getPressureMm, getTime } from '../utils'
 
 const props = defineProps({
@@ -117,8 +116,14 @@ const props = defineProps({
   },
 })
 
+const timeZone = computed(() => props.weatherInfo?.timezone)
+
 const sunriseTime = computed(() => {
-  return getTime(props.weatherInfo?.sys?.sunrise)
+  return getTime(props.weatherInfo?.sys?.sunrise + timeZone.value)
+})
+
+const sunsetTime = computed(() => {
+  return getTime(props.weatherInfo?.sys?.sunset + timeZone.value)
 })
 </script>
 

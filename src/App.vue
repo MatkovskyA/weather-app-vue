@@ -9,14 +9,14 @@
                 <div class="city-inner">
                   <input type="text" class="search" v-model="city" @keyup.enter="getWeather"/>
                 </div>
-                <WeatherSummary :weatherInfo="weatherInfo"/>
+                <WeatherSummary v-if="!isError" :weatherInfo="weatherInfo"/>
               </div>
             </section>
-            <section class="section section-right">
+            <section v-if="!isError" class="section section-right">
               <TheHighlights :weatherInfo="weatherInfo"/>
             </section>
           </div>
-          <div v-if="weatherInfo?.weather" class="sections">
+          <div v-if="!isError" class="sections">
             <TheCoords :coord="weatherInfo.coord"/>
             <TheHumidity :humidity="weatherInfo.main.humidity"/>
           </div>
@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { API_KEY, BASE_URL } from './constants';
 import WeatherSummary from './components/WeatherSummary.vue';
 import TheHighlights from './components/TheHighlights.vue';
@@ -36,6 +36,7 @@ import TheHumidity from './components/TheHumidity.vue';
 
 const city = ref('Moscow');
 const weatherInfo = ref(null);
+const isError = computed(() => weatherInfo.value?.cod !== 200)
 
 const getWeather = () => {
   fetch(`${BASE_URL}?q=${city.value}&units=metric&appid=${API_KEY}`)
